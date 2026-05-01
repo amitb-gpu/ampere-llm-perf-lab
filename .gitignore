@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv/
+venv/
+
+# Model weights & caches (these get HUGE)
+*.bin
+*.safetensors
+*.gguf
+*.pt
+*.pth
+hf_cache/
+.cache/
+
+# Profiler outputs (large binaries)
+profiling/traces/*.nsys-rep
+profiling/traces/*.qdrep
+profiling/traces/*.sqlite
+
+# Results - keep CSVs and plots, but ignore raw logs
+results/raw_logs/
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,8 @@
+name: llmperf
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  # pip-installed packages tracked separately in requirements.txt
+  # to keep CUDA wheel index URLs out of the conda file
