@@ -1,11 +1,12 @@
 """
-Stage 1: Baseline FP32 inference.
+Stage 2: BF16 mixed precision inference.
 
-Deliberately naive starting point:
-- FP32 weights (Ampere tensor cores idle for matmul)
-- Eager mode (no torch.compile)
-- Eager attention (no FlashAttention, no SDPA fast path)
-- Batch size 1
+Single change vs. stage 1: dtype = bfloat16.
+
+Why BF16 over FP16 on Ampere:
+- Same exponent range as FP32 (no underflow risk for activations)
+- Same tensor-core throughput as FP16 on SM 8.0+
+- Modern production default for LLM inference
 """
 
 from __future__ import annotations
@@ -17,14 +18,14 @@ from transformers import AutoModelForCausalLM
 
 from _common import MODEL_ID, MAX_NEW_TOKENS, MEASURE_RUNS, WARMUP_RUNS, load_tokenizer, run_stage
 
-STAGE_NAME = "01_baseline_fp32"
+STAGE_NAME = "02_bf16"
 
 
 def load_model_and_tokenizer():
     tokenizer = load_tokenizer()
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
-        dtype=torch.float32,
+        dtype=torch.bfloat16,
         attn_implementation="eager",
     ).to("cuda")
     model.eval()
@@ -42,7 +43,7 @@ def main():
         stage_name=STAGE_NAME,
         model_loader=load_model_and_tokenizer,
         stage_config={
-            "dtype": "float32",
+            "dtype": "bfloat16",
             "attn_implementation": "eager",
             "batch_size": 1,
         },
